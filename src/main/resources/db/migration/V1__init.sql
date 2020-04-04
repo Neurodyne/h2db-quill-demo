@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS 
 Entry (
-  checked BOOLEAN NOT NULL,
+  checked INT NOT NULL,
   date VARCHAR(255) NOT NULL
 );

@@ -12,7 +12,7 @@ import H2Config._
 
 object H2Client {
 
-  def getConfig(cfg: AppConfig) = {
+  private def getConfig(cfg: AppConfig) = {
     lazy val memMap = Map(
       "dataSourceClassName" -> cfg.db.className,
       "dataSource.url"      -> cfg.db.memurl,
@@ -38,14 +38,6 @@ object H2Client {
     )
 
     import ctx._
-
-    ctx.executeAction(
-      """CREATE TABLE IF NOT EXISTS Entry (
-        |  checked BOOLEAN,
-        |  date VARCHAR
-        |);
-        |""".stripMargin
-    )
 
     run(query[Entry].insert(_.checked -> true, _.date -> lift(ju.Calendar.getInstance().getTime.toString)))
 

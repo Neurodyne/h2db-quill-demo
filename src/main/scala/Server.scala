@@ -10,6 +10,7 @@ object H2Server {
     val dataSource = if (cfg.server.serverType == "memory") cfg.db.memurl else cfg.db.diskurl
     Flyway
       .configure()
+      .validateMigrationNaming(true)
       .dataSource(dataSource, cfg.db.user, cfg.db.pass)
       .load()
       .migrate()
