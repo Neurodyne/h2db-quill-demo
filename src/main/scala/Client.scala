@@ -10,9 +10,14 @@ import com.typesafe.config.{ ConfigFactory }
 
 import H2Config._
 
-object H2Client {
+class H2Client(val cfg: AppConfig) {
+  lazy val ctx: H2JdbcContext[SnakeCase] = new H2JdbcContext(
+    SnakeCase,
+    getConfig()
+  )
+  import ctx._
 
-  private def getConfig(cfg: AppConfig) = {
+  private def getConfig() = {
     lazy val memMap = Map(
       "dataSourceClassName" -> cfg.db.className,
       "dataSource.url"      -> cfg.db.memurl,
@@ -31,17 +36,17 @@ object H2Client {
     else ConfigFactory.parseMap(diskMap)
   }
 
-  def work(cfg: AppConfig) = {
-    lazy val ctx: H2JdbcContext[SnakeCase] = new H2JdbcContext(
-      SnakeCase,
-      getConfig(cfg)
-    )
-
-    import ctx._
-
+  def create() =
     run(query[Entry].insert(_.checked -> true, _.date -> lift(ju.Calendar.getInstance().getTime.toString)))
 
+  def read() = println(run(query[Entry].filter(_.checked == true)))
+
+  def update() = {
+    Thread.sleep(1000)
+    run(query[Entry].update(_.checked -> true, _.date -> lift(ju.Calendar.getInstance().getTime.toString)))
     println(run(query[Entry].filter(_.checked == true)))
-    println("Done")
   }
+
+  def delete() = run(query[Entry].delete)
+
 }
