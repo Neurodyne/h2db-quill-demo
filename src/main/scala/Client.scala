@@ -12,15 +12,24 @@ import H2Config._
 
 object H2Client {
 
-  def getConfig(cfg: AppConfig) =
-    ConfigFactory.parseMap(
-      Map(
-        "dataSourceClassName" -> cfg.database.className,
-        "dataSource.url"      -> cfg.database.url,
-        "dataSource.user"     -> cfg.database.user,
-        "dataSource.password" -> cfg.database.pass
-      ).asJava
-    )
+  def getConfig(cfg: AppConfig) = {
+    lazy val memMap = Map(
+      "dataSourceClassName" -> cfg.db.className,
+      "dataSource.url"      -> cfg.db.memurl,
+      "dataSource.user"     -> cfg.db.user,
+      "dataSource.password" -> cfg.db.pass
+    ).asJava
+
+    lazy val diskMap = Map(
+      "dataSourceClassName" -> cfg.db.className,
+      "dataSource.url"      -> cfg.db.diskurl,
+      "dataSource.user"     -> cfg.db.user,
+      "dataSource.password" -> cfg.db.pass
+    ).asJava
+
+    if (cfg.server.serverType == "memory") ConfigFactory.parseMap(memMap)
+    else ConfigFactory.parseMap(diskMap)
+  }
 
   def work(cfg: AppConfig) = {
     lazy val ctx: H2JdbcContext[SnakeCase] = new H2JdbcContext(
@@ -31,7 +40,7 @@ object H2Client {
     import ctx._
 
     ctx.executeAction(
-      """CREATE TABLE IF NOT EXISTS todo (
+      """CREATE TABLE IF NOT EXISTS Entry (
         |  checked BOOLEAN,
         |  date VARCHAR
         |);

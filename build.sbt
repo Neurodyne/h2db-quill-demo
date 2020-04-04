@@ -14,7 +14,8 @@ lazy val commonSettings = Seq(
 lazy val deps = libraryDependencies ++= Seq(
   "io.getquill"           %% "quill-jdbc" % Version.quill,
   "com.github.pureconfig" %% "pureconfig" % Version.pureconfig,
-  "com.h2database"        % "h2"          % Version.h2db
+  "com.h2database"        % "h2"          % Version.h2db,
+  "org.flywaydb"          % "flyway-core" % Version.flyway
 )
 
 lazy val root = (project in file("."))

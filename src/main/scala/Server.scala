@@ -1,23 +1,23 @@
 package h2demo
 
-import java.sql.DriverManager
+import org.flywaydb.core.Flyway
 
-import org.h2.tools.Server
+import h2demo.H2Config.DBConfig
 
 object H2Server {
 
-  def startMemoryServer() = {
-    Server.createTcpServer("-tcpAllowOthers").start
-    Class.forName("org.h2.Driver")
-    DriverManager.getConnection("jdbc:h2:mem:testdb;MODE=PostgreSQL", "sa", "")
-    Server.createWebServer().start()
-  }
+  def startMemoryServer(cfg: DBConfig) =
+    Flyway
+      .configure()
+      .dataSource(cfg.memurl, cfg.user, cfg.pass)
+      .load()
+      .migrate()
 
-  def startPersistantServer() = {
-    Server.createTcpServer("-tcpAllowOthers").start
-    Class.forName("org.h2.Driver")
-    DriverManager.getConnection("jdbc:h2:tcp://localhost/~/h2test;MODE=PostgreSQL;AUTO_SERVER=TRUE", "sa", "")
-    Server.createWebServer().start()
+  def startPersistantServer(cfg: DBConfig) =
+    Flyway
+      .configure()
+      .dataSource(cfg.diskurl, cfg.user, cfg.pass)
+      .load()
+      .migrate()
 
-  }
 }
