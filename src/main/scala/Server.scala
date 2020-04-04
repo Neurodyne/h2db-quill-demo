@@ -2,22 +2,17 @@ package h2demo
 
 import org.flywaydb.core.Flyway
 
-import h2demo.H2Config.DBConfig
+import h2demo.H2Config.AppConfig
 
 object H2Server {
 
-  def startMemoryServer(cfg: DBConfig) =
+  def start(cfg: AppConfig) = {
+    val dataSource = if (cfg.server.serverType == "memory") cfg.db.memurl else cfg.db.diskurl
     Flyway
       .configure()
-      .dataSource(cfg.memurl, cfg.user, cfg.pass)
+      .dataSource(dataSource, cfg.db.user, cfg.db.pass)
       .load()
       .migrate()
-
-  def startPersistantServer(cfg: DBConfig) =
-    Flyway
-      .configure()
-      .dataSource(cfg.diskurl, cfg.user, cfg.pass)
-      .load()
-      .migrate()
+  }
 
 }

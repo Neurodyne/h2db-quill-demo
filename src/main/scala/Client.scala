@@ -50,5 +50,6 @@ object H2Client {
     run(query[Entry].insert(_.checked -> true, _.date -> lift(ju.Calendar.getInstance().getTime.toString)))
 
     println(run(query[Entry].filter(_.checked == true)))
+    println("Done")
   }
 }
