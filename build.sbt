@@ -18,6 +18,13 @@ lazy val deps = libraryDependencies ++= Seq(
   "org.flywaydb"          % "flyway-core" % Version.flyway
 )
 
+lazy val zioDeps = libraryDependencies ++= Seq(
+  "dev.zio" %% "zio"              % Version.zio,
+  "dev.zio" %% "zio-test"         % Version.zio % "test",
+  "dev.zio" %% "zio-test-sbt"     % Version.zio % "test",
+  "dev.zio" %% "zio-interop-cats" % Version.zioInteropCats
+)
+
 lazy val root = (project in file("."))
   .settings(
     organization := "Neurodyne",
@@ -26,6 +33,7 @@ lazy val root = (project in file("."))
     scalaVersion := "2.13.1",
     maxErrors := 3,
     commonSettings,
+    zioDeps,
     deps,
     testFrameworks := Seq(new TestFramework("zio.test.sbt.ZTestFramework"))
   )
